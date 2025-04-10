@@ -7,10 +7,12 @@ read.scm4 <- function(file, ...) {
   
   
   input_lines <- readLines(con = file)
-  row_numbers <- grep(input_lines, pattern = "^GROUP|^Number of isolates")
+  group_rows <- grep(input_lines, pattern = "^GROUP")
+  isolates_row <- grep(input_lines, pattern = "^Number of isolates")
   
-  skip <- row_numbers[-length(row_numbers)]
-  n    <- diff(row_numbers) - 3L
+  
+  skip <- group_rows
+  n    <- diff(c(group_rows, isolates_row)) - 3L
   group_list <- Map(
     f = read.table
     , skip = skip
@@ -21,19 +23,40 @@ read.scm4 <- function(file, ...) {
     , header = FALSE
   )
   
+  # todo: add group stats (from ^GROUP lines, nominations, )
+  group_info <- strsplit(input_lines[group_rows], split = "MEMBERS|NOMINATIONS:|CENTRALITY:") |>
+    lapply(trimws) |>
+    lapply(function(x){
+      list(
+        nominations = as.integer(x[[3L]])
+        , centrality = tolower(x[[4L]])
+      )
+    })
+  
+  isolates <- as.integer(gsub(input_lines[isolates_row], pattern = ".* = ", replacement = ""))
+  
   y <- Map(
     x = group_list
     , i = seq_along(group_list)
-    , f = function(x, i) {
+    , group_info = group_info
+    , isolates = isolates
+    , f = function(x, i, group_info, isolates) {
       data.frame(
         file = basename(file)
         , group = i
-        , name = trimws(gsub(x$V4, pattern = "name:", replacement = ""))
+        , participant = trimws(gsub(x$V4, pattern = "name:", replacement = ""))
         , nominations = as.integer(trimws(gsub(x$V6, pattern = "nominations:", replacement = "")))
-        , V8 = trimws(x$V8)
-        , members = nrow(x)
+        , centrality = tolower(trimws(x$V8))
+        , group_nominations = group_info$nominations
+        , group_centrality = group_info$centrality
+        , n_members = nrow(x)
+        , n_isolates = isolates
+        , uuid = uuid::UUIDgenerate(n = 1L)
       )
     }
   ) |>
     do.call(what = "rbind")
+  
+  # return
+  y
 }
