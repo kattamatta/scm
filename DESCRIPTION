@@ -7,7 +7,7 @@ Authors@R: c(
       family  = "Mattonet",
       role    = c("aut", "cre"),
       email   = "katharina.mattonet@uni-bielefeld.de",
-      comment = c(ORCID = NA_character_)
+      comment = c(ORCID = "0000-0003-0846-593X")
     ),
     person(
       given   = "Marius",
@@ -16,12 +16,14 @@ Authors@R: c(
       email   = "marius.barth.uni.koeln@gmail.com",
       comment = c(ORCID = "0000-0002-3421-6665")
     ))
-Description: Read output files from SCM 4.0
+Description: This package is to pre- and post-process and read output files from SCM 4.0.
 Imports:
   uuid, 
   stringr,
   tidyr,
   dplyr
+Suggests:
+  knitr
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
