@@ -1,6 +1,8 @@
 
-file <- "~/Downloads/SCM/tmp_outputfull.txt"
 
+#' @examples
+#' list.files(path = "~/Downloads/output", full.names = TRUE) |>
+#'   lapply(read.scm4)
 #' @export
 
 read.scm4 <- function(file, ...) {
@@ -30,32 +32,51 @@ read.scm4 <- function(file, ...) {
       list(
         nominations = as.integer(x[[3L]])
         , centrality = tolower(x[[4L]])
+        , isolates = FALSE
       )
     })
   
-  isolates <- as.integer(gsub(input_lines[isolates_row], pattern = ".* = ", replacement = ""))
+  n_isolates <- as.integer(gsub(input_lines[isolates_row], pattern = ".* = ", replacement = ""))
+  
+  if(n_isolates > 0) {
+    isolates_data <- read.table(file = file, skip = isolates_row, nrows = n_isolates, sep = "\t", header = FALSE) |>
+      within({
+        V8 <- NA
+      })
+    
+    group_list <- c(group_list, list(isolates_data))
+    group_info <- c(group_info, list(list(nominations = NA, centrality = NA, isolates = TRUE)))
+  }
   
   y <- Map(
     x = group_list
     , i = seq_along(group_list)
     , group_info = group_info
-    , isolates = isolates
-    , f = function(x, i, group_info, isolates) {
+    # , isolates = isolates
+    , f = function(
+      x
+      , i
+      , group_info
+      # , isolates
+    ) {
       data.frame(
         file = basename(file)
-        , group = i
+        , group = if(group_info$isolates) NA else i
         , participant = trimws(gsub(x$V4, pattern = "name:", replacement = ""))
         , nominations = as.integer(trimws(gsub(x$V6, pattern = "nominations:", replacement = "")))
         , centrality = tolower(trimws(x$V8))
         , group_nominations = group_info$nominations
         , group_centrality = group_info$centrality
         , n_members = nrow(x)
-        , n_isolates = isolates
-        , uuid = uuid::UUIDgenerate(n = 1L)
+        # , n_isolates = isolates
+        # , uuid = uuid::UUIDgenerate(n = 1L)
       )
     }
   ) |>
-    do.call(what = "rbind")
+    do.call(what = "rbind") |>
+    within({
+      file_uuid <- uuid::UUIDgenerate(n = 1L)
+    })
   
   # return
   y
