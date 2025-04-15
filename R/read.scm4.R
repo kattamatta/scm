@@ -1,7 +1,7 @@
 
 
 #' @examples
-#' list.files(path = "~/Downloads/output", full.names = TRUE) |>
+#' list.files(path = "~/Downloads/SCM/output", full.names = TRUE) |>
 #'   lapply(read.scm4)
 #' @export
 
@@ -61,7 +61,7 @@ read.scm4 <- function(file, ...) {
     ) {
       data.frame(
         file = basename(file)
-        , group = if(group_info$isolates) NA else i
+        , group = if(group_info$isolates) "isolates" else as.character(i)
         , participant = trimws(gsub(x$V4, pattern = "name:", replacement = ""))
         , nominations = as.integer(trimws(gsub(x$V6, pattern = "nominations:", replacement = "")))
         , centrality = tolower(trimws(x$V8))
