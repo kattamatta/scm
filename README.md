@@ -12,6 +12,7 @@ b) social preference
 - calculate social preference within school/stream & format into one result data frame
 
 ## Installation
+
 **scm** can be installed from GitHub using the following code. Note: On Windows, [Rtools](https://cran.r-project.org/bin/windows/Rtools/) have to be installed.
 
 ```r
