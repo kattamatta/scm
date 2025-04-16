@@ -177,5 +177,5 @@ scm.prep <- function(data, save, file){
       }
     }
   } 
-  print("successfully created data frames")
+  print("successfully created data.frames 'scm_sch#' &/or 'scm_str#_sch#'")
 }

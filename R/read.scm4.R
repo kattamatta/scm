@@ -1,8 +1,9 @@
-
-
-#' @examples
-#' list.files(path = "~/Downloads/SCM/output", full.names = TRUE) |>
-#'   lapply(read.scm4)
+#' import single scm output file with information on participant's & group's nomination, centrality, school/stream
+#'
+#' @description this function imports a single scm output file, with information on participant's & group's nomination & centrality plus adds columns for school/stream information
+#'
+#' @param file path to folder that holds the single be imported scm output data frames. The data frame is a .txt and hold the results from the peer nomination analysis conducted in external software.
+#' @return data frame with information on participant's & group's nomination, centrality, school/stream
 #' @export
 
 read.scm4 <- function(file, ...) {

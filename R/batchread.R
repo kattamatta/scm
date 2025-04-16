@@ -2,10 +2,10 @@
 #'
 #' @description this function imports multiple scm output files, with information on participant's & group's nomination & centrality plus adds columns for school/stream information, then rowbinds data sets into one data frame
 #'
-#' @param path path to folder that holds all to be imported scm output data frames. Data frames are .txt and named in the general pattern "scm_str#_sch#.txt" or "scm_sch#.txt" , where # is to be replaced by number of specific school & stream. The single to be imported .txt files hold the results from the peer nomination analysis conducted in external sotware
+#' @param path path to folder that holds all to be imported scm output data frames. Data frames are .txt and named in the general pattern "scm_str#_sch#.txt" or "scm_sch#.txt" , where # is to be replaced by number of specific school & stream. The single to be imported .txt files hold the results from the peer nomination analysis conducted in external sofware.
 #' @param save logical. If `TRUE`, returned data frame will be saved as .txt with ; separation
 #' @param file required if `save == TRUE`. `file` has to be absolute path in "" where returned data set should be stored.
-#' @return data frame of imported with information on participant's & group's nomination, centrality, school/stream
+#' @return data frame of all imported files with information on participant's & group's nomination, centrality, school/stream
 #' @export
 
 

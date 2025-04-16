@@ -25,7 +25,7 @@ sps.calc <- function(data, save, file){
     utils::write.csv2(sps, file = file, row.names = FALSE)
   } else {
   }
-  print("successfully calculated sps amount")
+  print("successfully calculated sps amount; output in data.frame 'sps'")
 }
 
 
