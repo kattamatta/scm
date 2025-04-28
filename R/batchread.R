@@ -32,7 +32,7 @@ tmp$uuid <- NULL
 assign("scm_merged_output", value = tmp, envir = .GlobalEnv)
 if (save == "TRUE") {
   file <- paste(file)
-  utils::write.csv2(sch_merged_output, file = file, row.names = FALSE)
+  utils::write.csv2(scm_merged_output, file = file, row.names = FALSE)
 } else {
 }
 print("successfully created data frame with merged scm results")
