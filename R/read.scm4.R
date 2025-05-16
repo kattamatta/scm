@@ -1,17 +1,28 @@
-#' import single scm output file with information on participant's & group's nomination, centrality, school/stream
+#' import single scm output file with information on informant's & group's nomination, centrality, school/stream
 #'
-#' @description this function imports a single scm output file, with information on participant's & group's nomination & centrality plus adds columns for school/stream information
+#' @description this function imports a single scm output file, with information on informants's & group's nomination & centrality plus adds columns for school/stream information
 #'
-#' @param file path to folder that holds the single be imported scm output data frames. The data frame is a .txt and hold the results from the peer nomination analysis conducted in external software.
-#' @return data frame with information on participant's & group's nomination, centrality, school/stream
+#' @param file path to folder that holds the single be imported scm output data frames. The data frame is a .txt and hold the results on informants only from the peer nomination analysis conducted in external software.
+#' @return data frame with information on informant's & group's nomination, centrality, school/stream
+#' \item{file}{name of input .txt-file}
+#' \item{group}{ _GROUP_ or `isolates` in case of isolates}
+#' \item{informant}{ _name_ }
+#' \item{nominations}{informant's _nominations_ }
+#' \item{centrality}{informant's _centrality_ }
+#' \item{group_nominations}{group's _NOMINATION_ }
+#' \item{group_centrality}{group's _CENTRALITY_ }
+#' \item{n_memebers}{group's _MEMBERS_ or _Number of isolates_ in case of isolates}
+#' \item{str}{stream from .txt-file name or `NA` in case of non stream}
+#' \item{sch}{school from .txt-file name}
 #' @export
 
-read.scm4 <- function(file, ...) {
+read.scm4 <- function(file, onlyinfo, ...) {
   
   
   input_lines <- readLines(con = file)
   group_rows <- grep(input_lines, pattern = "^GROUP")
   isolates_row <- grep(input_lines, pattern = "^Number of isolates")
+  informant_rows <- grep(input_lines, pattern = "Informant:")
   
   
   skip <- group_rows
@@ -36,6 +47,14 @@ read.scm4 <- function(file, ...) {
         , isolates = FALSE
       )
     })
+  
+  informant_info <- strsplit(input_lines[informant_rows], split = "Informant:") |>
+    lapply(trimws) |>
+    lapply(function(x){
+        informant2 = as.integer(x[[2L]])
+    })|>
+    unlist() |>
+    unique()
   
   n_isolates <- as.integer(gsub(input_lines[isolates_row], pattern = ".* = ", replacement = ""))
   
@@ -63,7 +82,7 @@ read.scm4 <- function(file, ...) {
       data.frame(
         file = basename(file)
         , group = if(group_info$isolates) "isolates" else as.character(i)
-        , participant = trimws(gsub(x$V4, pattern = "name:", replacement = ""))
+        , informant = trimws(gsub(x$V4, pattern = "name:", replacement = ""))
         , nominations = as.integer(trimws(gsub(x$V6, pattern = "nominations:", replacement = "")))
         , centrality = tolower(trimws(x$V8))
         , group_nominations = group_info$nominations
@@ -76,8 +95,14 @@ read.scm4 <- function(file, ...) {
   ) |>
     do.call(what = "rbind") |>
     within({
-      file_uuid <- uuid::UUIDgenerate(n = 1L)
+      #file_uuid <- uuid::UUIDgenerate(n = 1L)
     })
+  
+  if(onlyinfo == "TRUE"){
+  y$informant2 <- y$informant %in% informant_info
+  y <- y[y$informant2 == "TRUE", ]
+  y$informant2 <- NULL
+  } else {}
   
   # return
   y
