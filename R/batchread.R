@@ -19,10 +19,12 @@
 #' 
 #' @export
 
-batch.read <- function(path, save, file, onlyinfo, ...){
+batch.read <- function(path, save, file, onlyinfo = FALSE, ...){
+  
   filenames <- list.files(path = path, full.names = T)
-tmp <- lapply(filenames, read.scm4, onlyinfo = onlyinfo) |>
-  do.call(what = "rbind")
+  
+  tmp <- lapply(filenames, read.scm4, onlyinfo = onlyinfo) |>
+    do.call(what = "rbind")
 
 tmp$file <- gsub("scm_|\\.txt", "", tmp$file)
 

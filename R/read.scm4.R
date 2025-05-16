@@ -11,12 +11,16 @@
 #' \item{centrality}{informant's _centrality_ }
 #' \item{group_nominations}{group's _NOMINATION_ }
 #' \item{group_centrality}{group's _CENTRALITY_ }
-#' \item{n_memebers}{group's _MEMBERS_ or _Number of isolates_ in case of isolates}
+#' \item{n_members}{group's _MEMBERS_ or _Number of isolates_ in case of isolates}
 #' \item{str}{stream from .txt-file name or `NA` in case of non stream}
 #' \item{sch}{school from .txt-file name}
 #' @export
 
-read.scm4 <- function(file, onlyinfo, ...) {
+read.scm4 <- function(file, onlyinfo = FALSE, ...) {
+  
+  # Input validation ----
+  if(!length(onlyinfo) == 1L | anyNA(onlyinfo)) stop("Argument 'onlyinfo' must be TRUE or FALSE.")
+  onlyinfo <- isTRUE(onlyinfo)
   
   
   input_lines <- readLines(con = file)
@@ -98,11 +102,11 @@ read.scm4 <- function(file, onlyinfo, ...) {
       #file_uuid <- uuid::UUIDgenerate(n = 1L)
     })
   
-  if(onlyinfo == "TRUE"){
   y$informant2 <- y$informant %in% informant_info
-  y <- y[y$informant2 == "TRUE", ]
-  y$informant2 <- NULL
-  } else {}
+  
+  if(onlyinfo){
+    y <- subset(y, informant2)
+  }
   
   # return
   y
