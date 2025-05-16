@@ -2,16 +2,26 @@
 % Please edit documentation in R/read.scm4.R
 \name{read.scm4}
 \alias{read.scm4}
-\title{import single scm output file with information on participant's & group's nomination, centrality, school/stream}
+\title{import single scm output file with information on informant's & group's nomination, centrality, school/stream}
 \usage{
 read.scm4(file, ...)
 }
 \arguments{
-\item{file}{path to folder that holds the single be imported scm output data frames. The data frame is a .txt and hold the results from the peer nomination analysis conducted in external software.}
+\item{file}{path to folder that holds the single be imported scm output data frames. The data frame is a .txt and hold the results on informants only from the peer nomination analysis conducted in external software.}
 }
 \value{
 data frame with information on participant's & group's nomination, centrality, school/stream
+\item{file}{name of input .txt-file}
+\item{group}{ \emph{GROUP} or \code{isolates} in case of isolates}
+\item{participant}{ \emph{name} }
+\item{nominations}{participant's \emph{nominations} }
+\item{centrality}{participant's \emph{centrality} }
+\item{group_nominations}{group's \emph{NOMINATION} }
+\item{group_centrality}{group's \emph{CENTRALITY} }
+\item{n_memebers}{group's \emph{MEMBERS} or \emph{Number of isolates} in case of isolates}
+\item{str}{stream from .txt-file name or \code{NA} in case of non stream}
+\item{sch}{school from .txt-file name}
 }
 \description{
-this function imports a single scm output file, with information on participant's & group's nomination & centrality plus adds columns for school/stream information
+this function imports a single scm output file, with information on informants's & group's nomination & centrality plus adds columns for school/stream information
 }
