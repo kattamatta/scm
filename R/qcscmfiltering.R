@@ -223,10 +223,41 @@ qcscm.filtering <- function(data, save, file){
   
   tmp_red2 <- tmp[rowSums(sapply(tmp[, c(2:length(tmp))], IsOutlier, USE.NAMES = FALSE), na.rm = TRUE) > 0, ]
   dfo <- subset(tmp_red2, select = c("sch", "scm_class_nr_1"))
-  dfo$pat <- rep("outlier identifier", nrow(dfo))
+  dfo$pat <- rep("outlier identifier across all variables", nrow(dfo))
+  
+  ## identify outliers within on variable
+  dfoiown <- tmp[, grepl("sch|scm_class_nr_1|scm_owngrp_*", names(tmp))]
+  dfoiown <- dfoiown[rowSums(sapply(dfoiown[, c(2:length(dfoiown))], IsOutlier, USE.NAMES = FALSE), na.rm = TRUE) > 0, ]
+  dfoiown <- subset(dfoiown, select = c("sch", "scm_class_nr_1"))
+  dfoiown$pat <- rep("outlier identifier in scm_owngrp", nrow(dfoiown))
+  
+  dfoiothgrp1 <- tmp[, grepl("sch|scm_class_nr_1|scm_othgrp1_*", names(tmp))]
+  dfoiothgrp1 <- dfoiothgrp1[rowSums(sapply(dfoiothgrp1[, c(2:length(dfoiothgrp1))], IsOutlier, USE.NAMES = FALSE), na.rm = TRUE) > 0, ]
+  dfoiothgrp1 <- subset(dfoiothgrp1, select = c("sch", "scm_class_nr_1"))
+  dfoiothgrp1$pat <- rep("outlier identifier in scm_othgrp1", nrow(dfoiothgrp1))
+  
+  dfoiothgrp2 <- tmp[, grepl("sch|scm_class_nr_1|scm_othgrp2_*", names(tmp))]
+  dfoiothgrp2 <- dfoiothgrp2[rowSums(sapply(dfoiothgrp2[, c(2:length(dfoiothgrp2))], IsOutlier, USE.NAMES = FALSE), na.rm = TRUE) > 0, ]
+  dfoiothgrp2 <- subset(dfoiothgrp2, select = c("sch", "scm_class_nr_1"))
+  dfoiothgrp2$pat <- rep("outlier identifier in scm_othgrp2", nrow(dfoiothgrp2))
+  
+  dfoiothgrp3 <- tmp[, grepl("sch|scm_class_nr_1|scm_othgrp3_*", names(tmp))]
+  dfoiothgrp3 <- dfoiothgrp3[rowSums(sapply(dfoiothgrp3[, c(3:length(dfoiothgrp3))], IsOutlier, USE.NAMES = FALSE), na.rm = TRUE) > 0, ]
+  dfoiothgrp3 <- subset(dfoiothgrp3, select = c("sch", "scm_class_nr_1"))
+  dfoiothgrp3$pat <- rep("outlier identifier in scm_othgrp3", nrow(dfoiothgrp3))
+
+  dfoilikemst <- tmp[, grepl("sch|scm_class_nr_1|scm_likemst_*", names(tmp))]
+  dfoilikemst <- dfoilikemst[rowSums(sapply(dfoilikemst[, c(3:length(dfoilikemst))], IsOutlier, USE.NAMES = FALSE), na.rm = TRUE) > 0, ]
+  dfoilikemst <- subset(dfoilikemst, select = c("sch", "scm_class_nr_1"))
+  dfoilikemst$pat <- rep("outlier identifier in scm_likemst", nrow(dfoilikemst))
+  
+  dfoilikelst <- tmp[, grepl("sch|scm_class_nr_1|scm_likelst_*", names(tmp))]
+  dfoilikelst <- dfoilikelst[rowSums(sapply(dfoilikelst[, c(3:length(dfoilikelst))], IsOutlier, USE.NAMES = FALSE), na.rm = TRUE) > 0, ]
+  dfoilikelst <- subset(dfoilikelst, select = c("sch", "scm_class_nr_1"))
+  dfoilikelst$pat <- rep("outlier identifier in scm_likelst", nrow(dfoilikelst))
   
   ## combine data 
-  df_all <- rbind(dfc, dfna, dfdup, dfd, dfo, dfdiown, dfdiothgrp1, dfdiothgrp2, dfdiothgrp3, dfdilikemst, dfdilikelst, df19own, df20othgrp1, df20othgrp2, df20othgrp3, df20likemst, df20likelst)
+  df_all <- rbind(dfc, dfna, dfdup, dfd, dfo, dfdiown, dfdiothgrp1, dfdiothgrp2, dfdiothgrp3, dfdilikemst, dfdilikelst, df19own, df20othgrp1, df20othgrp2, df20othgrp3, df20likemst, df20likelst, dfoiown, dfoiothgrp1, dfoiothgrp2, dfoiothgrp3, dfoilikemst, dfoilikelst)
   df_all$schclass <- paste(df_all$sch, df_all$scm_class_nr_1)
   duplcode2_c <- subset(df_all$schclass, duplicated(df_all$schclass))
   if(length(duplcode2_c) != 0){

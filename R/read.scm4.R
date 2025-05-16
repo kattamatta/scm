@@ -1,19 +1,19 @@
-#' import single scm output file with information on informant's & group's nomination, centrality, school/stream
+#' import single scm output file with information on participant's & group's nomination, centrality plus participant being informant or non-informant
 #'
-#' @description this function imports a single scm output file, with information on informants's & group's nomination & centrality plus adds columns for school/stream information
+#' @description this function imports a single scm output file, with information on participant's & group's nomination & centrality plus information whether participant is an informant or non-informant
 #'
-#' @param file path to folder that holds the single be imported scm output data frames. The data frame is a .txt and hold the results on informants only from the peer nomination analysis conducted in external software.
-#' @return data frame with information on informant's & group's nomination, centrality, school/stream
+#' @param file path to folder that holds the single be imported scm output data frames. The data frame is a .txt and hold the results on participants only from the peer nomination analysis conducted in external software.
+#' @param onlyinfo logical, `FALSE` (default) informants and non-informants will be included in the returned data frame, `TRUE` only informants will be included in the returned data frame
+#' @return data frame with information on participant's & group's nomination, centrality, school/stream
 #' \item{file}{name of input .txt-file}
 #' \item{group}{ _GROUP_ or `isolates` in case of isolates}
-#' \item{informant}{ _name_ }
-#' \item{nominations}{informant's _nominations_ }
-#' \item{centrality}{informant's _centrality_ }
+#' \item{participant}{ _name_ }
+#' \item{nominations}{participant's _nominations_ }
+#' \item{centrality}{participant's _centrality_ }
 #' \item{group_nominations}{group's _NOMINATION_ }
 #' \item{group_centrality}{group's _CENTRALITY_ }
 #' \item{n_members}{group's _MEMBERS_ or _Number of isolates_ in case of isolates}
-#' \item{str}{stream from .txt-file name or `NA` in case of non stream}
-#' \item{sch}{school from .txt-file name}
+#' \item{informant}{logical, `TRUE` indicates that participant is an informant, `FALSE` incidates that participant is a non-informant}
 #' @export
 
 read.scm4 <- function(file, onlyinfo = FALSE, ...) {
@@ -41,7 +41,6 @@ read.scm4 <- function(file, onlyinfo = FALSE, ...) {
     , header = FALSE
   )
   
-  # todo: add group stats (from ^GROUP lines, nominations, )
   group_info <- strsplit(input_lines[group_rows], split = "MEMBERS|NOMINATIONS:|CENTRALITY:") |>
     lapply(trimws) |>
     lapply(function(x){
@@ -55,7 +54,7 @@ read.scm4 <- function(file, onlyinfo = FALSE, ...) {
   informant_info <- strsplit(input_lines[informant_rows], split = "Informant:") |>
     lapply(trimws) |>
     lapply(function(x){
-        informant2 = as.integer(x[[2L]])
+        informant = as.integer(x[[2L]])
     })|>
     unlist() |>
     unique()
@@ -86,7 +85,7 @@ read.scm4 <- function(file, onlyinfo = FALSE, ...) {
       data.frame(
         file = basename(file)
         , group = if(group_info$isolates) "isolates" else as.character(i)
-        , informant = trimws(gsub(x$V4, pattern = "name:", replacement = ""))
+        , participant = trimws(gsub(x$V4, pattern = "name:", replacement = ""))
         , nominations = as.integer(trimws(gsub(x$V6, pattern = "nominations:", replacement = "")))
         , centrality = tolower(trimws(x$V8))
         , group_nominations = group_info$nominations
@@ -102,10 +101,10 @@ read.scm4 <- function(file, onlyinfo = FALSE, ...) {
       #file_uuid <- uuid::UUIDgenerate(n = 1L)
     })
   
-  y$informant2 <- y$informant %in% informant_info
+  y$informant <- y$participant %in% informant_info
   
   if(onlyinfo){
-    y <- subset(y, informant2)
+    y <- subset(y, informant)
   }
   
   # return
